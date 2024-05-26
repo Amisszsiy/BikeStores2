@@ -1,0 +1,20 @@
+﻿@using BikeStores2.Domain.Models
+
+<Select Items="brands"
+        @bind-SelectedValue="selectedBrand"
+        TextExpression="e=>e.Name"
+        NoSelectedText="*Select Brand*"
+        DisabledExpression="@(e=>e.Name.StartsWith("A"))" />
+
+@code {
+    private Brand? selectedBrand;
+    private List<Brand>? brands = new List<Brand>();
+
+    HttpClient httpClient = new HttpClient();
+
+    protected override async Task OnInitializedAsync()
+    {
+        brands = await httpClient.GetFromJsonAsync<List<Brand>>("https://localhost:7217/getbrandlistasync");
+        selectedBrand = brands!.First();
+    }
+}

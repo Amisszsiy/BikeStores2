@@ -1,5 +1,6 @@
 using BikeStores2.Frontend;
 using BikeStores2.Infrastructure.Data;
+using TabBlazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,8 @@ builder.Services.AddRazorComponents()
 builder.Services.AddDatabaseService(builder.Configuration);
 
 builder.Services.AddControllers();
+
+builder.Services.AddTabler();
 
 var app = builder.Build();
 

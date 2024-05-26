@@ -1,7 +1,40 @@
-﻿@page "/productsummary"
+﻿@page "/admin/product/productsummary"
+@using BikeStores2.Domain.Models
+@rendermode InteractiveServer
 
-<PageTitle>Product Summary</PageTitle>
+<PageTitle>Products</PageTitle>
+<h2>Product Summary</h2>
+
+@if (products == null)
+{
+    <h2>No data</h2>
+}
+else
+{
+    <QuickGrid Items="@products.AsQueryable()" Pagination="@pagination">
+        <PropertyColumn Property="@(p => p.product_id)" Title="Id" Sortable="true" />
+        <PropertyColumn Property="@(p => p.product_name)" Title="Name" Sortable="true" />
+        <PropertyColumn Property="@(p => p.model_year)" Title="Year" Sortable="true" />
+        <PropertyColumn Property="@(p => p.list_price)" Title="Price" Sortable="true" />
+            <TemplateColumn>
+            <Button BackgroundColor="TablerColor.Yellow" Shape="ButtonShape.Pill">Edit</Button>
+            </TemplateColumn>
+        <TemplateColumn>
+            <Button BackgroundColor="TablerColor.Red" Shape="ButtonShape.Pill">Delete</Button>
+        </TemplateColumn>
+    </QuickGrid>
+    <Paginator State="@pagination" />
+}
+
+<BikeStores2.Frontend.Components.Product.BrandList />
 
 @code {
+    PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
+    List<Product>? products;
+    HttpClient httpClient = new HttpClient();
 
+    protected override async Task OnInitializedAsync()
+    {
+        products = await httpClient.GetFromJsonAsync<List<Product>>("https://localhost:7217/getproducts");
+    }
 }

@@ -1,0 +1,74 @@
+﻿@using BikeStores2.Domain.Models
+@using TabBlazor.Services
+@inject IModalService ModalService
+
+<EditForm Model="@product">
+    <h3>Edit Product</h3>
+    <hr />
+    <div class="form-group row">
+        <label for="product_name" class="col-sm-2 col-form-label">
+            First Name
+        </label>
+        <div class="col-sm-10">
+            <InputText id="product_name" class="form-control" placeholder="Product Name"
+                       @bind-Value="product.product_name" />
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="brand_id" class="col-sm-2 col-form-label">
+            Brand
+        </label>
+        <div class="col-sm-10">
+            <BrandList @bind-value="product.brand_id"/>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="list_price" class="col-sm-2 col-form-label">
+            List price
+        </label>
+        <div class="col-sm-10">
+            <InputText id="list_price" class="form-control" />
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public int? product_id { get; set; }
+
+    [SupplyParameterFromForm]
+    private Product? product { get; set; }
+
+    HttpClient httpClient = new HttpClient();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if(product is not null)
+        {
+            return;
+        }
+
+        if(product_id is not null)
+        {
+            product = await httpClient.GetFromJsonAsync<Product>("https://localhost/getproductasync/{product_id}");
+        }
+        else
+        {
+            product = new()
+                {
+                    product_id = 0,
+                    product_name = string.Empty,
+                    brand_id = 0,
+                    category_id = 0,
+                    model_year = 0,
+                    list_price = 0
+                };
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+}

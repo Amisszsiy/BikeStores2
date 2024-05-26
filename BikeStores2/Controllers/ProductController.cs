@@ -22,5 +22,13 @@ namespace BikeStores2.Controllers
 
             return Ok(products);
         }
+
+        [HttpGet]
+        [Route("/getproductasync/{id}")]
+        public async Task<IActionResult> GetProductAsync(int id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            return Ok(product);
+        }
     }
 }

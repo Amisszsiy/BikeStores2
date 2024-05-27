@@ -10,14 +10,14 @@ namespace BikeStores2.Domain.Models
         [Column("product_id")]
         public int product_id { get; set; }
         [Column("product_name")]
-        public required string product_name { get; set; }
+        public string product_name { get; set; }
         [Column("brand_id")]
-        public required int brand_id { get; set; }
+        public int brand_id { get; set; }
         [Column("category_id")]
-        public required int category_id { get; set; }
+        public int category_id { get; set; }
         [Column("model_year")]
-        public required Int16 model_year { get; set; }
+        public Int16 model_year { get; set; }
         [Column("list_price")]
-        public required decimal list_price { get; set; }
+        public decimal list_price { get; set; }
     }
 }

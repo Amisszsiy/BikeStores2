@@ -1,0 +1,20 @@
+﻿@using BikeStores2.Domain.Models
+
+<Select Items="categories"
+        @bind-SelectedValue="selectedCategory"
+        TextExpression="e=>e.Name"
+        NoSelectedText="*Select Category*"
+        DisabledExpression="@(e=>e.Name.StartsWith("A"))" />
+
+@code {
+    private Category? selectedCategory;
+    private List<Category>? categories = new List<Category>();
+
+    HttpClient httpClient = new HttpClient();
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await httpClient.GetFromJsonAsync<List<Category>>("https://localhost:7217/getcategorylistasync");
+        selectedCategory = categories!.First();
+    }
+}

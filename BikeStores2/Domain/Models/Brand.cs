@@ -10,6 +10,6 @@ namespace BikeStores2.Domain.Models
         [Column("brand_id")]
         public int Id { get; set; }
         [Column("brand_name")]
-        public required string Name { get; set; }
+        public string Name { get; set; }
     }
 }

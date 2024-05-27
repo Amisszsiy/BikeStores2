@@ -18,9 +18,17 @@ namespace BikeStores2.Controllers
 
         [HttpGet]
         [Route("/getbrandlistasync")]
-        public async Task<IActionResult> GetBrandList() {
+        public async Task<IActionResult> GetBrandListAsync() {
             var brandList = await _dbContext.Brands.ToListAsync();
             return Ok(brandList);
+        }
+
+        [HttpGet]
+        [Route("/getbrandasync/{id}")]
+        public async Task<IActionResult> GetBrandAsync(int id)
+        {
+            var brand = await _dbContext.Brands.FindAsync(id);
+            return Ok(brand);
         }
     }
 }

@@ -25,6 +25,8 @@
             </BlazoredTypeahead>
 
             <Button Type="ButtonType.Button" BackgroundColor="TablerColor.Success" OnClick="ShowResult" Text="Submit" />
+            <Button Type="ButtonType.Button" BackgroundColor="TablerColor.Primary" Text="@ButtonText" IsLoading="Loading" />
+            <Button Type="ButtonType.Button" BackgroundColor="TablerColor.Success" OnClick="ToggleLoading" Text="Start Process" />
         </CardBody>
     </Card>
 </Page>
@@ -37,6 +39,9 @@
 
     public Brand? Brand { get; set; }
     public Product? Product { get; set; }
+
+    public bool Loading { get; set; } = false;
+    public string ButtonText { get; set; } = "Processing";
 
     protected override async Task OnInitializedAsync()
     {
@@ -77,5 +82,19 @@
     private void ShowResult()
     {
         Console.WriteLine($"Selected: {Product.product_name}");
+    }
+
+    private void ToggleLoading()
+    {
+        if (Loading)
+        {
+            Loading = false;
+            ButtonText = "Processed";
+        }
+        else
+        {
+            Loading = true;
+            ButtonText = "Processing";
+        }
     }
 }

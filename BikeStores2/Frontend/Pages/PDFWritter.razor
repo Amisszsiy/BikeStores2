@@ -1,0 +1,19 @@
+﻿@page "/create-contract"
+@rendermode InteractiveServer
+@using Application.Services
+@inject PDFService PDFService
+
+<h3>PDFWritter</h3>
+
+<Button Type="ButtonType.Button" BackgroundColor="TablerColor.Azure" OnClick="GenerateContract" Text="Create Contract" />
+
+@code {
+    private string sourcePdfPath = @"\pdf\pdffile.pdf";
+    private string outputPdfPath = @"\pdf\newContract.pdf";
+    private string customerName = $"Mathus ({DateTime.Now.ToString("M")})";
+    private int[] pagesToModify = new int[] { 1, 2, 3 };
+    private void GenerateContract()
+    {
+        PDFService.AddCustomerNameToPdf(sourcePdfPath,outputPdfPath,customerName,pagesToModify);
+    }
+}

@@ -11,5 +11,10 @@ namespace BikeStores2.Infrastructure.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Brand> Brands { get; set; }
+
+        public void Save()
+        {
+            this.SaveChanges();
+        }
     }
 }

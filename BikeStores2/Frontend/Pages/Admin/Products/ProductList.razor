@@ -1,6 +1,10 @@
-﻿@page "/admin/product/productsummary"
+﻿@page "/productsummary"
+@using BikeStores2.Application.Services
 @using BikeStores2.Domain.Models
 @rendermode InteractiveServer
+@inject ProductService _ProductService
+@inject HostEnvironmentService HostEnvironmentService
+@inject HttpClient HttpClient
 
 <PageTitle>Products</PageTitle>
 <h2>Product Summary</h2>
@@ -28,6 +32,9 @@ else
 
 <BikeStores2.Frontend.Components.Product.BrandList />
 
+<InputFile OnChange="HandleSelected" />
+<Button Text="Import" Type="ButtonType.Submit" BackgroundColor="TablerColor.Indigo" OnClick="ImportFile" />
+
 @code {
     PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
     List<Product>? products;
@@ -35,6 +42,40 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        products = await httpClient.GetFromJsonAsync<List<Product>>("https://localhost:7217/getproducts");
+        // products = await httpClient.GetFromJsonAsync<List<Product>>("https://localhost:7217/getproducts");
+        products = await _ProductService.GetProductsAsync();
+    }
+
+    private IBrowserFile? formFile;
+
+    private void HandleSelected(InputFileChangeEventArgs e)
+    {
+        formFile = e.File;
+    }
+
+    protected async Task ImportFile()
+    {
+        if(formFile is not null)
+        {
+            var content = new MultipartFormDataContent();
+            var fileContent = new StreamContent(formFile.OpenReadStream());
+            fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(formFile.ContentType);
+
+            string endPoint = $"{HostEnvironmentService.GetBaseUrl()}/import";
+
+            var response = await httpClient.PostAsync(endPoint, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Handle success
+                Console.WriteLine("File uploaded successfully.");
+            }
+            else
+            {
+                // Handle failure
+                Console.WriteLine("File upload failed.");
+            }
+
+        }
     }
 }

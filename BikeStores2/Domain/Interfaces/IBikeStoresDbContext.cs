@@ -10,5 +10,7 @@ namespace BikeStores2.Domain.Interfaces
         public DbSet<Product> Products { get; }
         public DbSet<Category> Categories { get;}
         public DbSet<Brand> Brands { get; }
+
+        public void Save();
     }
 }

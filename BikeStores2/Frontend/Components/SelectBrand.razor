@@ -1,0 +1,20 @@
+﻿@using BikeStores2.Domain.Models
+
+<Select Items="brands"
+        @bind-SelectedValue="selectedBrand" 
+        Updated="OnBrandSelected"
+        TextExpression="e=>e.Name"
+        NoSelectedText="*Select Brand*" />
+
+@code {
+    private Brand selectedBrand;
+    [Parameter]
+    public List<Brand> brands { get; set; } = new List<Brand>();
+    [Parameter]
+    public EventCallback<Brand> BrandEvent { get; set; }
+
+    protected void OnBrandSelected()
+    {
+        BrandEvent.InvokeAsync(selectedBrand);
+    }
+}

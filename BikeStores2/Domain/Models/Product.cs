@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BikeStores2.Domain.Models
@@ -10,9 +11,12 @@ namespace BikeStores2.Domain.Models
         [Column("product_id")]
         public int product_id { get; set; }
         [Column("product_name")]
-        public string product_name { get; set; }
+        public string? product_name { get; set; }
         [Column("brand_id")]
         public int brand_id { get; set; }
+        [ForeignKey(nameof(brand_id))]
+        [ValidateNever]
+        public Brand? brand { get; set; }
         [Column("category_id")]
         public int category_id { get; set; }
         [Column("model_year")]

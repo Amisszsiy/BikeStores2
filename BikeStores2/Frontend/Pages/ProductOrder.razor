@@ -1,5 +1,6 @@
 ﻿@page "/ProductOrder"
 @using BikeStores2.Domain.Models
+@using Blazored.Typeahead
 @rendermode InteractiveServer
 
 <Page>
@@ -11,7 +12,19 @@
         </CardHeader>
         <CardBody>
             <SelectBrand brands="brandList" BrandEvent="FilterProduct" />
-            <SelectProduct products="filteredProducts" ProductEvent="SetSelectProduct" />
+
+            @* <SelectProduct products="filteredProducts" ProductEvent="SetSelectProduct" /> *@
+
+            <BlazoredTypeahead SearchMethod="SearchProduct" EnableDropDown="true" @bind-Value="Product">
+                <SelectedTemplate>
+                    @context.product_name
+                </SelectedTemplate>
+                <ResultTemplate>
+                    @context.product_name
+                </ResultTemplate>
+            </BlazoredTypeahead>
+
+            <Button Type="ButtonType.Button" BackgroundColor="TablerColor.Success" OnClick="ShowResult" Text="Submit" />
         </CardBody>
     </Card>
 </Page>
@@ -54,5 +67,15 @@
         {
             Console.WriteLine($"Brand : {Brand.Name}, Product : {Product.product_name}");
         }
+    }
+
+    private async Task<IEnumerable<Product>> SearchProduct(string searchText)
+    {
+        return await Task.FromResult(filteredProducts.Where(x => x.product_name.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+
+    private void ShowResult()
+    {
+        Console.WriteLine($"Selected: {Product.product_name}");
     }
 }

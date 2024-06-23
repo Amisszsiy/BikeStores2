@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.Typeahead" Version="4.7.0" />
     <PackageReference Include="ClosedXML" Version="0.102.2" />
     <PackageReference Include="itext7" Version="8.0.4" />
     <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.4" />

@@ -1,0 +1,73 @@
+﻿@page "/Upload"
+@using System
+@using Minio
+@using Minio.Exceptions
+@using Minio.DataModel
+@using Minio.Credentials
+@using Minio.DataModel.Args
+@using System.Threading.Tasks
+@inject IMinioClient minioClient
+@rendermode InteractiveServer
+
+<h3>Upload</h3>
+<InputFile OnChange="HandleSelected" multiple />
+<span class="text-success">@successMessage</span>
+<span class="text-danger">@errorMessage</span>
+<Button BackgroundColor="TablerColor.Primary" Text="Upload" OnClick="LoadFiles" />
+
+@code {
+    protected string errorMessage = String.Empty;
+    protected string successMessage = String.Empty;
+    private IBrowserFile? browserFile;
+
+    private void HandleSelected(InputFileChangeEventArgs e)
+    {
+        browserFile = e.File;
+    }
+
+    private async Task LoadFiles()
+    {
+        successMessage = String.Empty;
+
+        if(browserFile is not null)
+        {
+            using(var stream = new MemoryStream())
+            {
+                await browserFile.OpenReadStream(5 * 1024 * 1024).CopyToAsync(stream);
+                byte[] fileBytes = stream.ToArray();
+
+                var bucketName = "documents";
+                var objName = browserFile.Name;
+                var contentType = browserFile.ContentType;
+
+                try
+                {
+                    var beArgs = new BucketExistsArgs()
+                    .WithBucket(bucketName);
+                    bool found = await minioClient.BucketExistsAsync(beArgs).ConfigureAwait(false);
+                    if (!found)
+                    {
+                        var mbArgs = new MakeBucketArgs()
+                            .WithBucket(bucketName);
+                        await minioClient.MakeBucketAsync(mbArgs).ConfigureAwait(false);
+                    }
+
+                    PutObjectArgs poa = new PutObjectArgs()
+                    .WithBucket(bucketName)
+                    .WithObject(objName)
+                    .WithStreamData(new MemoryStream(fileBytes))
+                    .WithObjectSize(-1)
+                    .WithContentType(contentType);
+
+                    await minioClient.PutObjectAsync(poa).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    errorMessage = ex.Message;
+                }
+
+                successMessage = "Uploaded successfully";
+            }
+        }
+    }
+}

@@ -1,5 +1,6 @@
 using BikeStores2.Frontend;
 using BikeStores2.Infrastructure.Data;
+using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,13 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddDatabaseService(builder.Configuration);
+
+// Add Minio using the custom endpoint and configure additional settings for default MinioClient initialization
+builder.Services.AddMinio(configureClient => configureClient
+    .WithEndpoint("localhost", 9000)
+    .WithCredentials("minioadmin", "minioadmin")
+    .WithSSL(false)
+    .Build());
 
 builder.Services.AddControllers();
 

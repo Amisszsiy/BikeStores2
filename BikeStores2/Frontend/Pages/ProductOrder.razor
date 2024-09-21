@@ -1,0 +1,100 @@
+﻿@page "/ProductOrder"
+@using BikeStores2.Domain.Models
+@using Blazored.Typeahead
+@rendermode InteractiveServer
+
+<Page>
+    <Card>
+        <CardHeader>
+            <CardTitle>
+                Select Product
+            </CardTitle>
+        </CardHeader>
+        <CardBody>
+            <SelectBrand brands="brandList" BrandEvent="FilterProduct" />
+
+            @* <SelectProduct products="filteredProducts" ProductEvent="SetSelectProduct" /> *@
+
+            <BlazoredTypeahead SearchMethod="SearchProduct" EnableDropDown="true" @bind-Value="Product">
+                <SelectedTemplate>
+                    @context.product_name
+                </SelectedTemplate>
+                <ResultTemplate>
+                    @context.product_name
+                </ResultTemplate>
+            </BlazoredTypeahead>
+
+            <Button Type="ButtonType.Button" BackgroundColor="TablerColor.Success" OnClick="ShowResult" Text="Submit" />
+            <Button Type="ButtonType.Button" BackgroundColor="TablerColor.Primary" Text="@ButtonText" IsLoading="Loading" />
+            <Button Type="ButtonType.Button" BackgroundColor="TablerColor.Success" OnClick="ToggleLoading" Text="Start Process" />
+        </CardBody>
+    </Card>
+</Page>
+
+@code {
+    protected List<Brand> brandList { get; set; }
+
+    protected List<Product> productList { get; set; }
+    protected List<Product> filteredProducts { get; set; }
+
+    public Brand? Brand { get; set; }
+    public Product? Product { get; set; }
+
+    public bool Loading { get; set; } = false;
+    public string ButtonText { get; set; } = "Processing";
+
+    protected override async Task OnInitializedAsync()
+    {
+        using(HttpClient client = new HttpClient())
+        {
+            HttpResponseMessage res = await client.GetAsync("https://localhost:7217/getbrandlistasync");
+            brandList = await res.Content.ReadFromJsonAsync<List<Brand>>();
+        }
+
+        using (HttpClient client = new HttpClient())
+        {
+            HttpResponseMessage res = await client.GetAsync("https://localhost:7217/getproducts");
+            productList = await res.Content.ReadFromJsonAsync<List<Product>>();
+            filteredProducts = productList;
+        }
+    }
+
+    public void FilterProduct(Brand brand)
+    {
+        Brand = brand;
+        filteredProducts = productList.Where(p => p.brand_id == brand.Id).ToList();
+    }
+
+    public void SetSelectProduct(Product product)
+    {
+        Product = product;
+        if(Brand != null)
+        {
+            Console.WriteLine($"Brand : {Brand.Name}, Product : {Product.product_name}");
+        }
+    }
+
+    private async Task<IEnumerable<Product>> SearchProduct(string searchText)
+    {
+        return await Task.FromResult(filteredProducts.Where(x => x.product_name.ToLower().Contains(searchText.ToLower())).ToList());
+    }
+
+    private void ShowResult()
+    {
+        Console.WriteLine($"Selected: {Product.product_name}");
+    }
+
+    private void ToggleLoading()
+    {
+        if (Loading)
+        {
+            Loading = false;
+            ButtonText = "Processed";
+        }
+        else
+        {
+            Loading = true;
+            ButtonText = "Processing";
+        }
+    }
+}

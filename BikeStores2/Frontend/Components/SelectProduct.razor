@@ -1,0 +1,21 @@
+﻿@using BikeStores2.Domain.Models
+
+<Select Items="products"
+        @bind-SelectedValue="selectedProduct"
+        Updated="OnProductSelected"
+        TextExpression="e=>e.product_name"
+        NoSelectedText="*Select Product*" />
+
+@code {
+    private BikeStores2.Domain.Models.Product selectedProduct;
+    [Parameter]
+    public List<BikeStores2.Domain.Models.Product> products { get; set; } = new List<BikeStores2.Domain.Models.Product>();
+
+    [Parameter]
+    public EventCallback<BikeStores2.Domain.Models.Product> ProductEvent { get; set; }
+
+    protected void OnProductSelected()
+    {
+        ProductEvent.InvokeAsync(selectedProduct);
+    }
+}

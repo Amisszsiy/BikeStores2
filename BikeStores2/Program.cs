@@ -1,5 +1,8 @@
+using BikeStores2.Application.Services;
 using BikeStores2.Frontend;
 using BikeStores2.Infrastructure.Data;
+using BikeStores2.Infrastructure.ExternalServices;
+using TabBlazor;
 using Minio;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +21,14 @@ builder.Services.AddMinio(configureClient => configureClient
     .Build());
 
 builder.Services.AddControllers();
+
+builder.Services.AddHttpClients();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<HostEnvironmentService>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<PDFService>();
+
+builder.Services.AddTabler();
 
 var app = builder.Build();
 
